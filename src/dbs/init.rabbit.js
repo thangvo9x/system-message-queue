@@ -28,7 +28,30 @@ const connectToRabbitMQTest = async () => {
   }
 };
 
+const consumerQueue = async (channel, queueName) => {
+  try {
+    await channel.assertQueue(queueName, { durable: true });
+    console.info('Waiting for messages...');
+    channel.consume(
+      queueName,
+      (msg) => {
+        // console.info({
+        //   msg,
+        //   message: `Received messages- ${queueName}: ${msg.content.toString()}`,
+        // });
+        console.info( `Received messages- ${queueName}: ${msg.content.toString()}`);
+      },
+      {
+        noAck: true,
+      }
+    );
+  } catch (error) {
+    console.error('error when publish message to rabbitmq', error);
+  }
+};
+
 module.exports = {
   connectToRabbitMQ,
-  connectToRabbitMQTest
+  connectToRabbitMQTest,
+  consumerQueue,
 };
