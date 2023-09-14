@@ -23,6 +23,8 @@ const messageService = {
       const { channel, connection } = await connectToRabbitMQ();
       const notificationQueue = 'notiQueueProcess';
 
+
+      setTimeout(() => {
       channel.consume(
         notificationQueue, 
         (msg) => {
@@ -30,6 +32,7 @@ const messageService = {
         channel.ack(msg);
         }
       );
+      }, 12000);
 
     } catch (error) {
       console.error( error);
@@ -55,7 +58,7 @@ const messageService = {
 
       await channel.bindQueue(queueResult.queue, notificationExchangeDLX, notificationRoutingKeyDLX)
       await channel.consume(queueResult.queue, msgFailed => {
-        console.info('This notification error, hot fix:', msgFailed.content.toString())
+        console.log('This notification error, hot fix:', msgFailed.content.toString())
       }, {
         noAck: true
       })
